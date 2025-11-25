@@ -8,8 +8,10 @@ import {
 export default function remunerationRoutes() {
   const router = express.Router();
 
+  
+  
   router.get("/search", searchRemunerationRecords);
-  router.get("/:id", getRemunerationById);
+  router.get("/:recordId", getRemunerationById);
   router.get("/", getAllRemunerationRecords);
   return router;
 }

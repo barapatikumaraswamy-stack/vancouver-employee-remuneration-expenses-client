@@ -5,7 +5,7 @@ import {
 } from "../db/remunaration.js";
 
 const getRemunerationById = (req, res) => {
-  const { recordId } = req.query;
+  const { recordId } = req.params;
   try {
     const remuneration = dbGetRemunerationById(Number(recordId));
     if (remuneration) {
