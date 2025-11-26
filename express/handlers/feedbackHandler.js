@@ -1,3 +1,4 @@
+import e from "express";
 import { dbInsertFeedback, dbGetFeedback } from "../db/feedback.js";
 
 export const insertFeedback = (req, res) => {
@@ -13,9 +14,10 @@ export const insertFeedback = (req, res) => {
 };
 
 export const getFeedback = (req, res) => {
-  const { employeeId, year } = req.query;
+ const { employeeId='*' , year } = req.query;
+ const yearNum = year ? Number(year) : null;
   try {
-    const feedback = dbGetFeedback(Number(employeeId), Number(year));
+    const feedback = dbGetFeedback(Number(employeeId), yearNum);
     if (feedback) {
       res.status(201).json(feedback);
     } else {

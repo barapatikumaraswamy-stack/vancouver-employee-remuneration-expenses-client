@@ -17,6 +17,15 @@ const dbInsertFeedback = (employeeId, year, rating, comment) => {
 };
 
 const dbGetFeedback = (employeeId, year) => {
+  if (year == null) {
+    return db
+      .prepare(`
+        SELECT rating, comment, year
+        FROM feedback
+        WHERE employee_id = ?;
+      `)
+      .all(employeeId);
+  }
   return db
     .prepare(
       `
