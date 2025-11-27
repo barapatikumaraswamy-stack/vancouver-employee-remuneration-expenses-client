@@ -52,7 +52,7 @@ const RemunerationExplorer = () => {
   const loadEmployees = async () => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/employees/all?limit=50&offset=0`
+        `${API_BASE_URL}/employees/all?limit=10000&offset=0`
       );
       const data = await response.json();
       setEmployees(data);
@@ -64,7 +64,7 @@ const RemunerationExplorer = () => {
   const loadDepartments = async () => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/departments/all?limit=50&offset=0`
+        `${API_BASE_URL}/departments/all?limit=10000&offset=0`
       );
       const data = await response.json();
       setDepartments(data);
@@ -76,7 +76,7 @@ const RemunerationExplorer = () => {
   const loadTitles = async () => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/titles/all?limit=50&offset=0`
+        `${API_BASE_URL}/titles/all?limit=100000&offset=0`
       );
       const data = await response.json();
       setTitles(data);
