@@ -9,7 +9,7 @@ const getRemunerationById = (req, res) => {
   try {
     const remuneration = dbGetRemunerationById(Number(recordId));
     if (remuneration) {
-      res.status(201).json(remuneration);
+      res.status(200).json(remuneration);
     } else {
       res.status(404).json({ error: "Remuneration not found" });
     }
@@ -23,8 +23,8 @@ const getAllRemunerationRecords = (req, res) => {
   const offset = req.query.offset ? Number(req.query.offset) : 0;
   try {
     const remuneration = dbGetAllRemunerationRecords(limit, offset);
-    if (remuneration) {
-      res.status(201).json(remuneration);
+    if (remuneration && remuneration.length > 0) {
+      res.status(200).json(remuneration);
     } else {
       res.status(404).json({ error: "Remuneration not found" });
     }
@@ -41,27 +41,24 @@ const searchRemunerationRecords = (req, res) => {
     titleId,
     minSalary,
     maxSalary,
-    limit = 100,
-    offset = 0,
+    limit,
+    offset,
   } = req.query;
+
   try {
-    const remuneration = dbSearchRemunerationRecords({
+    const rows = dbSearchRemunerationRecords({
       employeeId,
       year,
       departmentId,
       titleId,
       minSalary,
       maxSalary,
-      limit,
-      offset,
+      limit: limit || 50,
+      offset: offset || 0,
     });
-    if (remuneration) {
-      res.status(201).json(remuneration);
-    } else {
-      res.status(404).json({ error: "Remuneration not found" });
-    }
+    res.status(200).json(rows);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 

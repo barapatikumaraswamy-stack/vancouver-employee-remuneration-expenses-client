@@ -1,5 +1,8 @@
-import e from "express";
-import { dbInsertFeedback, dbGetFeedback } from "../db/feedback.js";
+import {
+  dbInsertFeedback,
+  dbGetFeedbackByEmployeeAndYear,
+  dbUpdateFeedback,
+} from "../db/feedback.js";
 
 export const insertFeedback = (req, res) => {
   const { employeeId, year, rating, comment } = req.body;
@@ -13,17 +16,52 @@ export const insertFeedback = (req, res) => {
   }
 };
 
-export const getFeedback = (req, res) => {
- const { employeeId='*' , year } = req.query;
- const yearNum = year ? Number(year) : null;
+export const getFeedbackForEmployeeYear = (req, res) => {
+  const { employeeId, year } = req.query;
+  if (!employeeId || !year) {
+    return res
+      .status(400)
+      .json({ success: false, error: "employeeId and year are required" });
+  }
   try {
-    const feedback = dbGetFeedback(Number(employeeId), yearNum);
-    if (feedback) {
-      res.status(201).json(feedback);
-    } else {
-      res.status(404).json({ error: "Feedback not found" });
-    }
+    const rows = dbGetFeedbackByEmployeeAndYear(
+      Number(employeeId),
+      Number(year)
+    );
+    res.status(200).json(rows);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ success: false, error: err.message });
+  }
+};
+
+export const updateFeedback = (req, res) => {
+  const { feedbackId } = req.params;
+  const { rating, comment } = req.body;
+
+  if (!feedbackId) {
+    return res
+      .status(400)
+      .json({ success: false, error: "feedbackId is required" });
+  }
+
+  if (
+    rating !== undefined &&
+    !["High", "Acceptable", "Low"].includes(rating)
+  ) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Invalid rating value" });
+  }
+
+  try {
+    const result = dbUpdateFeedback(Number(feedbackId), { rating, comment });
+    if (result.changes === 0) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Feedback not found" });
+    }
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    return res.status(400).json({ success: false, error: err.message });
   }
 };
