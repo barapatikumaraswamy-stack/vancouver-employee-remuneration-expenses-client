@@ -101,6 +101,7 @@ const RemunerationExplorer = () => {
     setError("");
     try {
       const url = buildSearchUrl();
+      console.log("##########search URl", url);
       const response = await fetch(url);
       if (!response.ok) {
         const errBody = await response.json().catch(() => ({}));
