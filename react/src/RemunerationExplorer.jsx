@@ -38,10 +38,10 @@ const RemunerationExplorer = () => {
   const [feedbackRating, setFeedbackRating] = useState("High");
   const [feedbackComment, setFeedbackComment] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
-  const [feedbackList, setFeedbackList] = useState([]);
-  const [editingFeedbackId, setEditingFeedbackId] = useState(null);
-  const [editingRating, setEditingRating] = useState("High");
-  const [editingComment, setEditingComment] = useState("");
+  const [feedbackJustSaved, setFeedbackJustSaved] = useState(false);
+
+  const [sortColumn, setSortColumn] = useState("");
+  const [sortDirection, setSortDirection] = useState("asc");
 
   useEffect(() => {
     loadEmployees();
@@ -86,9 +86,11 @@ const RemunerationExplorer = () => {
   };
 
   const buildSearchUrl = () => {
-    const url = new URL(`${API_BASE_URL}/remuneration/search`);
-    if (selectedEmployeeId) url.searchParams.set("employeeId", selectedEmployeeId);
-    if (selectedDepartmentId) url.searchParams.set("departmentId", selectedDepartmentId);
+    const url = new URL(`${API_BASE_URL}/remuneration/with-feedback/search`);
+    if (selectedEmployeeId)
+      url.searchParams.set("employeeId", selectedEmployeeId);
+    if (selectedDepartmentId)
+      url.searchParams.set("departmentId", selectedDepartmentId);
     if (selectedTitleId) url.searchParams.set("titleId", selectedTitleId);
     if (year) url.searchParams.set("year", year);
     if (limit) url.searchParams.set("limit", limit);
@@ -101,14 +103,30 @@ const RemunerationExplorer = () => {
     setError("");
     try {
       const url = buildSearchUrl();
-      console.log("##########search URl", url);
       const response = await fetch(url);
       if (!response.ok) {
         const errBody = await response.json().catch(() => ({}));
         throw new Error(errBody.error || "Failed to fetch data");
       }
       const data = await response.json();
-      setResults(Array.isArray(data) ? data : [data]);
+      let resArray = Array.isArray(data) ? data : [data];
+
+      if (sortColumn) {
+        resArray.sort((a, b) => {
+          const valA = a[sortColumn];
+          const valB = b[sortColumn];
+          if (typeof valA === "number" && typeof valB === "number") {
+            return sortDirection === "asc" ? valA - valB : valB - valA;
+          }
+          const strA = (valA || "").toString().toLowerCase();
+          const strB = (valB || "").toString().toLowerCase();
+          if (strA < strB) return sortDirection === "asc" ? -1 : 1;
+          if (strA > strB) return sortDirection === "asc" ? 1 : -1;
+          return 0;
+        });
+      }
+
+      setResults(resArray);
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -124,31 +142,6 @@ const RemunerationExplorer = () => {
     setSelectedTitleId("");
     setYear("");
     setOffset(0);
-  };
-
-  const loadFeedbackForRow = async (employeeId, yearValue) => {
-    try {
-      const url = new URL(`${API_BASE_URL}/feedback`);
-      url.searchParams.set("employeeId", employeeId);
-      url.searchParams.set("year", yearValue);
-      const response = await fetch(url.toString());
-      if (!response.ok) {
-        const errBody = await response.json().catch(() => ({}));
-        throw new Error(errBody.error || "Failed to load feedback");
-      }
-      const data = await response.json();
-      const list = Array.isArray(data)
-        ? data
-        : Array.isArray(data.data)
-        ? data.data
-        : Array.isArray(data.feedback)
-        ? data.feedback
-        : [];
-      setFeedbackList(list);
-    } catch (err) {
-      console.error(err);
-      setFeedbackList([]);
-    }
   };
 
   const handleSubmitFeedback = async (e) => {
@@ -171,39 +164,28 @@ const RemunerationExplorer = () => {
       }
       setFeedbackMessage("Feedback submitted.");
       setFeedbackComment("");
-      await loadFeedbackForRow(feedbackEmployeeId, feedbackYear);
+      setFeedbackJustSaved(true);
     } catch (err) {
       setFeedbackMessage(err.message);
     }
   };
 
-  const handleUpdateFeedback = async (e) => {
-    e.preventDefault();
-    if (!editingFeedbackId) return;
-    setFeedbackMessage("");
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/feedback/${editingFeedbackId}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            rating: editingRating,
-            comment: editingComment,
-          }),
-        }
-      );
-      const data = await response.json();
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Failed to update feedback");
-      }
-      setFeedbackMessage("Feedback updated.");
-      await loadFeedbackForRow(feedbackEmployeeId, feedbackYear);
-      setEditingFeedbackId(null);
-    } catch (err) {
-      setFeedbackMessage(err.message);
+  useEffect(() => {
+    if (
+      feedbackJustSaved &&
+      activeFeedbackRecordId &&
+      feedbackEmployeeId &&
+      feedbackYear
+    ) {
+      handleSearch();
+      setFeedbackJustSaved(false);
     }
-  };
+  }, [
+    feedbackJustSaved,
+    activeFeedbackRecordId,
+    feedbackEmployeeId,
+    feedbackYear,
+  ]);
 
   const handlePrevPage = () => {
     setOffset((prev) => Math.max(prev - limit, 0));
@@ -215,10 +197,19 @@ const RemunerationExplorer = () => {
 
   useEffect(() => {
     handleSearch();
-  }, [offset, limit]);
+  }, [offset, limit, sortColumn, sortDirection]);
 
   const visibleColCount =
     Object.values(visibleFields).filter((v) => v).length || 1;
+
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(column);
+      setSortDirection("asc");
+    }
+  };
 
   return (
     <div className="rem-container">
@@ -269,16 +260,10 @@ const RemunerationExplorer = () => {
         setFeedbackComment={setFeedbackComment}
         feedbackMessage={feedbackMessage}
         setFeedbackMessage={setFeedbackMessage}
-        feedbackList={feedbackList}
-        loadFeedbackForRow={loadFeedbackForRow}
         handleSubmitFeedback={handleSubmitFeedback}
-        editingFeedbackId={editingFeedbackId}
-        setEditingFeedbackId={setEditingFeedbackId}
-        editingRating={editingRating}
-        setEditingRating={setEditingRating}
-        editingComment={editingComment}
-        setEditingComment={setEditingComment}
-        handleUpdateFeedback={handleUpdateFeedback}
+        sortColumn={sortColumn}
+        sortDirection={sortDirection}
+        handleSort={handleSort}
       />
     </div>
   );

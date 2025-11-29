@@ -17,17 +17,16 @@ const ResultsTable = ({
   setFeedbackComment,
   feedbackMessage,
   setFeedbackMessage,
-  feedbackList,
-  loadFeedbackForRow,
   handleSubmitFeedback,
-  editingFeedbackId,
-  setEditingFeedbackId,
-  editingRating,
-  setEditingRating,
-  editingComment,
-  setEditingComment,
-  handleUpdateFeedback,
+  sortColumn,
+  sortDirection,
+  handleSort,
 }) => {
+  const renderSortIndicator = (column) => {
+    if (sortColumn !== column) return null;
+    return sortDirection === "asc" ? " ▲" : " ▼";
+  };
+
   return (
     <>
       <div className="rem-table-header">
@@ -40,12 +39,36 @@ const ResultsTable = ({
       <table className="rem-classic-table">
         <thead>
           <tr>
-            {visibleFields.employee && <th>Employee</th>}
-            {visibleFields.department && <th>Department</th>}
-            {visibleFields.title && <th>Title</th>}
-            {visibleFields.year && <th>Year</th>}
-            {visibleFields.remuneration && <th>Remuneration</th>}
-            {visibleFields.expenses && <th>Expenses</th>}
+            {visibleFields.employee && (
+              <th onClick={() => handleSort("employee_name")}>
+                Employee{renderSortIndicator("employee_name")}
+              </th>
+            )}
+            {visibleFields.department && (
+              <th onClick={() => handleSort("department_name")}>
+                Department{renderSortIndicator("department_name")}
+              </th>
+            )}
+            {visibleFields.title && (
+              <th onClick={() => handleSort("title_name")}>
+                Title{renderSortIndicator("title_name")}
+              </th>
+            )}
+            {visibleFields.year && (
+              <th onClick={() => handleSort("year")}>
+                Year{renderSortIndicator("year")}
+              </th>
+            )}
+            {visibleFields.remuneration && (
+              <th onClick={() => handleSort("remuneration")}>
+                Remuneration{renderSortIndicator("remuneration")}
+              </th>
+            )}
+            {visibleFields.expenses && (
+              <th onClick={() => handleSort("expenses")}>
+                Expenses{renderSortIndicator("expenses")}
+              </th>
+            )}
             {visibleFields.feedback && <th>Feedback</th>}
           </tr>
         </thead>
@@ -65,13 +88,11 @@ const ResultsTable = ({
                   <td>
                     <button
                       type="button"
-                      onClick={async () => {
-                        const isSame =
-                          activeFeedbackRecordId === row.record_id;
+                      onClick={() => {
+                        const isSame = activeFeedbackRecordId === row.record_id;
                         if (isSame) {
                           setActiveFeedbackRecordId(null);
                           setFeedbackMessage("");
-                          setEditingFeedbackId(null);
                           return;
                         }
                         setActiveFeedbackRecordId(row.record_id);
@@ -80,8 +101,6 @@ const ResultsTable = ({
                         setFeedbackRating("High");
                         setFeedbackComment("");
                         setFeedbackMessage("");
-                        setEditingFeedbackId(null);
-                        await loadFeedbackForRow(row.employee_id, row.year);
                       }}
                     >
                       {activeFeedbackRecordId === row.record_id
@@ -102,30 +121,14 @@ const ResultsTable = ({
                           {row.year})
                         </strong>
 
-                        {feedbackList.length > 0 && (
-                          <ul className="rem-feedback-list">
-                            {feedbackList.map((fb) => (
-                              <li key={fb.feedback_id}>
-                                <span>
-                                  [{fb.rating}]{" "}
-                                  {fb.comment || "(no comment)"}
-                                </span>
-                                <button
-                                  type="button"
-                                  style={{ marginLeft: "0.5rem" }}
-                                  onClick={() => {
-                                    setEditingFeedbackId(fb.feedback_id);
-                                    setEditingRating(fb.rating);
-                                    setEditingComment(fb.comment || "");
-                                    setFeedbackMessage("");
-                                  }}
-                                >
-                                  Edit
-                                </button>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
+                        <div className="rem-feedback-summary">
+                          <div>Total: {row.total_feedback_count ?? 0}</div>
+                          <div>
+                            High: {row.high_rating_count ?? 0} | Acceptable:{" "}
+                            {row.acceptable_rating_count ?? 0} | Low:{" "}
+                            {row.low_rating_count ?? 0}
+                          </div>
+                        </div>
 
                         <form
                           onSubmit={handleSubmitFeedback}
@@ -141,9 +144,7 @@ const ResultsTable = ({
                               }
                             >
                               <option value="High">High</option>
-                              <option value="Acceptable">
-                                Acceptable
-                              </option>
+                              <option value="Acceptable">Acceptable</option>
                               <option value="Low">Low</option>
                             </select>
                           </div>
@@ -165,42 +166,6 @@ const ResultsTable = ({
                             Save new feedback
                           </button>
                         </form>
-
-                        {editingFeedbackId && (
-                          <form
-                            onSubmit={handleUpdateFeedback}
-                            className="rem-feedback-form"
-                          >
-                            <div>Edit existing feedback</div>
-                            <div>
-                              <label>Rating</label>
-                              <select
-                                value={editingRating}
-                                onChange={(e) =>
-                                  setEditingRating(e.target.value)
-                                }
-                              >
-                                <option value="High">High</option>
-                                <option value="Acceptable">
-                                  Acceptable
-                                </option>
-                                <option value="Low">Low</option>
-                              </select>
-                            </div>
-
-                            <div>
-                              <label>Comment</label>
-                              <textarea
-                                value={editingComment}
-                                onChange={(e) =>
-                                  setEditingComment(e.target.value)
-                                }
-                              />
-                            </div>
-
-                            <button type="submit">Update feedback</button>
-                          </form>
-                        )}
 
                         {feedbackMessage && (
                           <span className="rem-feedback-message">
