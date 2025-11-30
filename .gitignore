@@ -4,3 +4,4 @@ node_modules
 express/public/main.js
 express/public/main.css
 express/public/*.map
+vite*
