@@ -14,7 +14,7 @@ const RemunerationExplorer = () => {
   const [selectedDepartmentId, setSelectedDepartmentId] = useState("");
   const [selectedTitleId, setSelectedTitleId] = useState("");
   const [year, setYear] = useState("");
-  const [limit, setLimit] = useState(50);
+  const [limit, setLimit] = useState(100);
   const [offset, setOffset] = useState(0);
 
   const [results, setResults] = useState([]);
