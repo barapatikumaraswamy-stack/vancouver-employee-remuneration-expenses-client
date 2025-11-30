@@ -29,13 +29,6 @@ const ResultsTable = ({
 
   return (
     <>
-      <div className="rem-table-header">
-        <div className="rem-table-title">Remuneration results</div>
-        <div className="rem-table-subtitle">
-          {results.length} record{results.length === 1 ? "" : "s"} shown
-        </div>
-      </div>
-
       <table className="rem-classic-table">
         <thead>
           <tr>
