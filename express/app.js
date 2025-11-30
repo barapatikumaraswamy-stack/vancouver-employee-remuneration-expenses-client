@@ -19,7 +19,7 @@ const InitServer = async () => {
 
   app.use(
     cors({
-      origin: "https://crispy-capybara-4j5jj657prj5f7qp7-5173.app.github.dev",
+      origin: "http://localhost:3000",
     })
   );
 
@@ -41,6 +41,11 @@ const InitServer = async () => {
     } else {
       res.status(500).json({ status: "SQLite connection failed" });
     }
+  });
+
+  app.use(express.static(path.join(import.meta.dirname, "public")));
+  app.use((req, res) => {
+    res.sendFile(path.join(import.meta.dirname, "public", "index.html"));
   });
 
   const server = app.listen(3000, () => {

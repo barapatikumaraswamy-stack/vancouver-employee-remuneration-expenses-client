@@ -3,8 +3,7 @@ import Filters from "./Filters.jsx";
 import ResultsTable from "./ResultsTable.jsx";
 import "./RemunerationExplorer.css";
 
-const API_BASE_URL =
-  "https://crispy-capybara-4j5jj657prj5f7qp7-3000.app.github.dev/v1";
+const API_BASE_URL = "http://localhost:3000/v1";
 
 const RemunerationExplorer = () => {
   const [employees, setEmployees] = useState([]);
