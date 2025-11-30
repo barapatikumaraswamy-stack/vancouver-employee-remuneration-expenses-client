@@ -25,8 +25,9 @@ export default function remunerationRoutes() {
     validateSearchRemunerationQuery,
     searchRemunerationWithFeedback
   );
+   router.get("/with-feedback/all", getAllRemunerationWithFeedback);
   router.get("/with-feedback/:recordId", getRemunerationWithFeedbackById);
-  router.get("/with-feedback", getAllRemunerationWithFeedback);
+ 
 
   return router;
 }
