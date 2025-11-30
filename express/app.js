@@ -17,12 +17,6 @@ const db = new DatabaseSync(path.join(import.meta.dirname, "./db/data.db"), {
 const InitServer = async () => {
   const app = express();
 
-  app.use(
-    cors({
-      origin: "http://localhost:3000",
-    })
-  );
-
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
@@ -47,7 +41,6 @@ const InitServer = async () => {
   app.use((req, res) => {
     res.sendFile(path.join(import.meta.dirname, "public", "index.html"));
   });
-
   const server = app.listen(3000, () => {
     console.log("Server is running on port 3000");
   });
