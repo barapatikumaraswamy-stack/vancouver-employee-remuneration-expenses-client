@@ -1,3 +1,6 @@
 node_modules
 .parcel-cache
 *.map
+express/public/main.js
+express/public/main.css
+express/public/*.map
