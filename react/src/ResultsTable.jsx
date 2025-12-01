@@ -21,6 +21,12 @@ const ResultsTable = ({
   sortColumn,
   sortDirection,
   handleSort,
+  lastFeedbackId,
+  lastFeedbackRating,
+  setLastFeedbackRating,
+  lastFeedbackComment,
+  setLastFeedbackComment,
+  handleUpdateLastFeedback,
 }) => {
   const renderSortIndicator = (column) => {
     if (sortColumn !== column) return null;
@@ -159,6 +165,39 @@ const ResultsTable = ({
                             Save new feedback
                           </button>
                         </form>
+
+                        {lastFeedbackId && (
+                          <form
+                            onSubmit={handleUpdateLastFeedback}
+                            className="rem-feedback-form"
+                            style={{ marginTop: "0.5rem" }}
+                          >
+                            <div>Edit last submitted feedback</div>
+                            <div>
+                              <label>Rating</label>
+                              <select
+                                value={lastFeedbackRating}
+                                onChange={(e) =>
+                                  setLastFeedbackRating(e.target.value)
+                                }
+                              >
+                                <option value="High">High</option>
+                                <option value="Acceptable">Acceptable</option>
+                                <option value="Low">Low</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label>Comment</label>
+                              <textarea
+                                value={lastFeedbackComment}
+                                onChange={(e) =>
+                                  setLastFeedbackComment(e.target.value)
+                                }
+                              />
+                            </div>
+                            <button type="submit">Update last feedback</button>
+                          </form>
+                        )}
 
                         {feedbackMessage && (
                           <span className="rem-feedback-message">

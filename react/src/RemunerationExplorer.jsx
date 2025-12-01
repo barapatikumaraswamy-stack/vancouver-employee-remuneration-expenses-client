@@ -39,6 +39,10 @@ const RemunerationExplorer = () => {
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [feedbackJustSaved, setFeedbackJustSaved] = useState(false);
 
+  const [lastFeedbackId, setLastFeedbackId] = useState(null);
+  const [lastFeedbackRating, setLastFeedbackRating] = useState("High");
+  const [lastFeedbackComment, setLastFeedbackComment] = useState("");
+
   const [sortColumn, setSortColumn] = useState("");
   const [sortDirection, setSortDirection] = useState("asc");
 
@@ -164,6 +168,36 @@ const RemunerationExplorer = () => {
       setFeedbackMessage("Feedback submitted.");
       setFeedbackComment("");
       setFeedbackJustSaved(true);
+      setLastFeedbackId(data.feedback_id);
+      setLastFeedbackRating(feedbackRating);
+      setLastFeedbackComment(feedbackComment);
+    } catch (err) {
+      setFeedbackMessage(err.message);
+    }
+  };
+
+  const handleUpdateLastFeedback = async (e) => {
+    e.preventDefault();
+    if (!lastFeedbackId) return;
+    setFeedbackMessage("");
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/feedback/${lastFeedbackId}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            rating: lastFeedbackRating,
+            comment: lastFeedbackComment,
+          }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Failed to update feedback");
+      }
+      setFeedbackMessage("Last feedback updated.");
+      setFeedbackJustSaved(true);
     } catch (err) {
       setFeedbackMessage(err.message);
     }
@@ -263,6 +297,12 @@ const RemunerationExplorer = () => {
         sortColumn={sortColumn}
         sortDirection={sortDirection}
         handleSort={handleSort}
+        lastFeedbackId={lastFeedbackId}
+        lastFeedbackRating={lastFeedbackRating}
+        setLastFeedbackRating={setLastFeedbackRating}
+        lastFeedbackComment={lastFeedbackComment}
+        setLastFeedbackComment={setLastFeedbackComment}
+        handleUpdateLastFeedback={handleUpdateLastFeedback}
       />
     </div>
   );
