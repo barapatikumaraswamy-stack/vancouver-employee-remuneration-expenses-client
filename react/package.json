@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "parcel src/index.html",
-    "start": "parcel build src/main.jsx --dist-dir ../express/public/",
+    "dev": "npx parcel watch src/main.jsx --dist-dir ../express/public",
+    "start": "npx parcel build src/main.jsx --dist-dir ../express/public",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
