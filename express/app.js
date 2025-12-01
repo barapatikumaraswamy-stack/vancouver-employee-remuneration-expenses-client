@@ -16,6 +16,14 @@ const db = new DatabaseSync(path.join(import.meta.dirname, "./db/data.db"), {
 
 const InitServer = async () => {
   const app = express();
+  app.use(
+    cors({
+      origin: [
+        "http://localhost:3000",
+        "https://vancouver-employee-remuneration-expenses.onrender.com",
+      ],
+    })
+  );
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
