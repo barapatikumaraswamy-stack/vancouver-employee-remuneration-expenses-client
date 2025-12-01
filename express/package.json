@@ -9,6 +9,7 @@
     "dev": "node --watch app.js",
     "build": "npm install",
     "start": "node app.js",
+    "db:reset": "cd db && sqlite3 data.db < schema.sql && node data.js",
     "open": "open http://localhost:3000"
   },
   "dependencies": {
