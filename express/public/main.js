@@ -17460,6 +17460,17 @@ const RemunerationExplorer = ()=>{
         loadDepartments();
         loadTitles();
     }, []);
+    (0, _react.useEffect)(()=>{
+        if (!activeFeedbackRecordId) return;
+        setFeedbackRating("High");
+        setFeedbackComment("");
+        setFeedbackMessage("");
+        setLastFeedbackId(null);
+        setLastFeedbackRating("High");
+        setLastFeedbackComment("");
+    }, [
+        activeFeedbackRecordId
+    ]);
     const loadEmployees = async ()=>{
         try {
             const response = await fetch(`${API_BASE_URL}/employees/all?limit=10000&offset=0`);
@@ -17628,7 +17639,7 @@ const RemunerationExplorer = ()=>{
                 children: "Vancouver Remuneration Explorer"
             }, void 0, false, {
                 fileName: "src/RemunerationExplorer.jsx",
-                lineNumber: 249,
+                lineNumber: 259,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _filtersJsxDefault.default), {
@@ -17658,7 +17669,7 @@ const RemunerationExplorer = ()=>{
                         }))
             }, void 0, false, {
                 fileName: "src/RemunerationExplorer.jsx",
-                lineNumber: 251,
+                lineNumber: 261,
                 columnNumber: 7
             }, undefined),
             error && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -17666,7 +17677,7 @@ const RemunerationExplorer = ()=>{
                 children: error
             }, void 0, false, {
                 fileName: "src/RemunerationExplorer.jsx",
-                lineNumber: 277,
+                lineNumber: 287,
                 columnNumber: 17
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _resultsTableJsxDefault.default), {
@@ -17698,17 +17709,17 @@ const RemunerationExplorer = ()=>{
                 handleUpdateLastFeedback: handleUpdateLastFeedback
             }, void 0, false, {
                 fileName: "src/RemunerationExplorer.jsx",
-                lineNumber: 279,
+                lineNumber: 289,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/RemunerationExplorer.jsx",
-        lineNumber: 248,
+        lineNumber: 258,
         columnNumber: 5
     }, undefined);
 };
-_s(RemunerationExplorer, "mLTgtynhW3FfI0wTnYjqceD1DVM=");
+_s(RemunerationExplorer, "8y/umLMVe4WBEfNyKCN89baka0U=");
 _c = RemunerationExplorer;
 exports.default = RemunerationExplorer;
 var _c;

@@ -52,6 +52,16 @@ const RemunerationExplorer = () => {
     loadTitles();
   }, []);
 
+  useEffect(() => {
+    if (!activeFeedbackRecordId) return;
+    setFeedbackRating("High");
+    setFeedbackComment("");
+    setFeedbackMessage("");
+    setLastFeedbackId(null);
+    setLastFeedbackRating("High");
+    setLastFeedbackComment("");
+  }, [activeFeedbackRecordId]);
+
   const loadEmployees = async () => {
     try {
       const response = await fetch(
