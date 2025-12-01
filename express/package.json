@@ -1,21 +1,21 @@
 {
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "node": "^25.2.1"
-  },
   "name": "express",
   "version": "1.0.0",
+  "private": true,
+  "type": "module",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch app.js",
     "open": "open http://localhost:3000"
   },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
-  "description": "",
-  "devDependencies": {}
+  "description": ""
 }
