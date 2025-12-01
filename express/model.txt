@@ -1,0 +1,6 @@
+params building based on contion 
+https://community.wappler.io/t/custom-sql-query-with-multiple-optional-parameters-and-conditions/61511
+
+
+shorthand of updating on triggers:
+https://stackoverflow.com/questions/36359440/postgresql-insert-on-conflict-update-upsert-use-all-excluded-values

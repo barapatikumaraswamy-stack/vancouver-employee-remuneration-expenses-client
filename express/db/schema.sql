@@ -98,10 +98,23 @@ SELECT
   remuneration_records.year,
   remuneration_records.remuneration,
   remuneration_records.expenses,
-  COALESCE(SUM(CASE WHEN feedback.rating = 'High' THEN 1 ELSE 0 END), 0)        AS high_rating_count,
-  COALESCE(SUM(CASE WHEN feedback.rating = 'Acceptable' THEN 1 ELSE 0 END), 0)  AS acceptable_rating_count,
-  COALESCE(SUM(CASE WHEN feedback.rating = 'Low' THEN 1 ELSE 0 END), 0)         AS low_rating_count,
-  COALESCE(COUNT(feedback.feedback_id), 0)                                      AS total_feedback_count
+IFNULL(
+  SUM(CASE WHEN feedback.rating = 'High' THEN 1 ELSE 0 END),
+  0
+) AS high_rating_count,
+IFNULL(
+  SUM(CASE WHEN feedback.rating = 'Acceptable' THEN 1 ELSE 0 END),
+  0
+) AS acceptable_rating_count,
+IFNULL(
+  SUM(CASE WHEN feedback.rating = 'Low' THEN 1 ELSE 0 END),
+  0
+) AS low_rating_count,
+IFNULL(
+  COUNT(feedback.feedback_id),
+  0
+) AS total_feedback_count
+
 FROM remuneration_records
 JOIN employees
   ON remuneration_records.employee_id = employees.employee_id
