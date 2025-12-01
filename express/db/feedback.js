@@ -6,14 +6,19 @@ const db = new DatabaseSync(path.join(import.meta.dirname, "data.db"), {
 });
 
 const dbInsertFeedback = (employeeId, year, rating, comment) => {
-  return db
-    .prepare(
-      `
-        INSERT INTO feedback (employee_id, year, rating, comment)
-        VALUES (?, ?, ?, ?);
-      `
-    )
-    .run(employeeId, year, rating, comment);
+  db.exec("BEGIN TRANSACTION;");
+  try {
+    const dbcall = db.prepare(`
+      INSERT INTO feedback (employee_id, year, rating, comment)
+      VALUES (?, ?, ?, ?);
+    `);
+    const output = dbcall.run(employeeId, year, rating, comment);
+    db.exec("COMMIT;");
+    return output;
+  } catch (err) {
+    db.exec("ROLLBACK;");
+    throw err;
+  }
 };
 
 const dbGetFeedbackByEmployeeAndYear = (employeeId, year) => {
