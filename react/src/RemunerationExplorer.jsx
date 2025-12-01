@@ -3,7 +3,8 @@ import Filters from "./Filters.jsx";
 import ResultsTable from "./ResultsTable.jsx";
 import "./RemunerationExplorer.css";
 
-const API_BASE_URL = "http://localhost:3000/v1";
+const API_BASE_URL =
+  "https://vancouver-employee-remuneration-expenses.onrender.com/v1";
 
 const RemunerationExplorer = () => {
   const [employees, setEmployees] = useState([]);
