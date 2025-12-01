@@ -16,27 +16,6 @@ const dbInsertFeedback = (employeeId, year, rating, comment) => {
     .run(employeeId, year, rating, comment);
 };
 
-const dbGetFeedback = (employeeId, year) => {
-  if (year == null) {
-    return db
-      .prepare(`
-        SELECT feedback_id, employee_id, year, rating, comment, created_at
-        FROM feedback
-        WHERE employee_id = ?;
-      `)
-      .all(employeeId);
-  }
-  return db
-    .prepare(
-      `
-        SELECT feedback_id, employee_id, year, rating, comment, created_at
-        FROM feedback
-        WHERE employee_id = ? AND year = ?;
-      `
-    )
-    .all(employeeId, year);
-};
-
 const dbGetFeedbackByEmployeeAndYear = (employeeId, year) => {
   return db
     .prepare(
@@ -78,9 +57,4 @@ const dbUpdateFeedback = (feedbackId, { rating, comment }) => {
   return db.prepare(sql).run(...params);
 };
 
-export {
-  dbInsertFeedback,
-  dbGetFeedback,
-  dbGetFeedbackByEmployeeAndYear,
-  dbUpdateFeedback,
-};
+export { dbInsertFeedback, dbGetFeedbackByEmployeeAndYear, dbUpdateFeedback };
